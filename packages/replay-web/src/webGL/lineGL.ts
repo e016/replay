@@ -145,8 +145,8 @@ export function getDrawLine(
 
     if (fillColor) {
       // Set colour
-      const { r, g, b } = hexToRGBPooled(fillColor, opacity);
-      gl.uniform4f(uColourLocation, r, g, b, opacity);
+      const { r, g, b, a } = hexToRGBPooled(fillColor, opacity);
+      gl.uniform4f(uColourLocation, r, g, b, opacity * a);
 
       glVao.bindVertexArrayOES(vaoFill);
 
@@ -154,10 +154,10 @@ export function getDrawLine(
       gl.drawArrays(gl.TRIANGLE_FAN, 0, path.length);
     }
     if (strokeColor) {
-      const { r, g, b } = hexToRGBPooled(strokeColor, opacity);
+      const { r, g, b, a } = hexToRGBPooled(strokeColor, opacity);
 
       // Set colour
-      gl.uniform4f(uColourLocation, r, g, b, opacity);
+      gl.uniform4f(uColourLocation, r, g, b, opacity * a);
 
       glVao.bindVertexArrayOES(vaoStroke);
 

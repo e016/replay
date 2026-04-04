@@ -96,8 +96,8 @@ export function getDrawRect(
     gl.uniformMatrix3fv(uMatrixLocation, false, uMatrixPooled);
 
     // Set colour
-    const { r, g, b } = hexToRGBPooled(colour, opacity);
-    gl.uniform4f(uColourLocation, r, g, b, opacity);
+    const { r, g, b, a } = hexToRGBPooled(colour, opacity);
+    gl.uniform4f(uColourLocation, r, g, b, opacity * a);
 
     // draw the quad (2 triangles, 6 vertices)
     gl.drawArrays(gl.TRIANGLES, 0, 6);

@@ -176,14 +176,14 @@ function setMatricesColoursData(
     // TODO: more efficient hiding
     const opacity = element.show ? parentOpacity * element.opacity : 0;
 
-    const { r, g, b } = hexToRGBPooled(element.color, opacity);
+    const { r, g, b, a } = hexToRGBPooled(element.color, opacity);
 
     const n2 = i * floatsPerColour;
 
     colours[n2] = r;
     colours[n2 + 1] = g;
     colours[n2 + 2] = b;
-    colours[n2 + 3] = opacity;
+    colours[n2 + 3] = opacity * a;
   }
 }
 

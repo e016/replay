@@ -61,17 +61,38 @@ const cssLevel1Colours: Record<string, string> = {
   aqua: "#00ffff",
 };
 
-const rgbResult = { r: 0, g: 0, b: 0 };
-export function hexToRGBPooled(hex: string, premultiplyAlpha?: number) {
-  if (!hex.startsWith("#")) {
-    hex = cssLevel1Colours[hex] || cssLevel1Colours.black;
+const rgbResult = { r: 0, g: 0, b: 0, a: 1 };
+export function hexToRGBPooled(color: string, premultiplyAlpha?: number) {
+  if (!color.startsWith("#") && !color.startsWith("rgb")) {
+    color = cssLevel1Colours[color] || cssLevel1Colours.black;
   }
 
-  const number = Number.parseInt(hex.slice(1), 16);
-  const red = number >> 16;
-  const green = (number >> 8) & 255;
-  const blue = number & 255;
+  let red,
+  green,
+  blue,
+  alpha = 1;
 
+  if (color.startsWith("rgb")) {
+    const values = (color.split(color.startsWith('rgba') ? 'rgba(' : 'rgb('))[1].split(",");
+    red = Number(values[0]),
+    green = Number(values[1]),
+    blue = Number(values[2].toString().replace(")", "")),
+    alpha = values.length > 3 ? Number(values[3].toString().replace(")", "")) : 1;
+  } else {
+    const number = Number.parseInt(color.slice(1), 16);
+    if (color.length > 7) {
+      red = (number >> 24) & 255;
+      green = (number >> 16) & 255;
+      blue = (number >> 8) & 255;
+      alpha = (number & 255) / 255;
+    } else {
+      red = number >> 16;
+      green = (number >> 8) & 255;
+      blue = number & 255;
+      alpha = 1;
+    }
+  }
+  
   if (premultiplyAlpha !== undefined) {
     rgbResult.r = premultiplyAlpha * (red / 255);
     rgbResult.g = premultiplyAlpha * (green / 255);
@@ -81,8 +102,10 @@ export function hexToRGBPooled(hex: string, premultiplyAlpha?: number) {
     rgbResult.g = green / 255;
     rgbResult.b = blue / 255;
   }
+  rgbResult.a = alpha;
 
   return rgbResult;
+
 }
 
 export function setupRampTexture(
@@ -146,12 +169,12 @@ function getRampData(gradient: Gradient) {
   for (let index = 0; index < gradient.colors.length; index++) {
     const colour = gradient.colors[index];
 
-    const { r, g, b } = hexToRGBPooled(colour);
-    let a = 1;
+    const { r, g, b, a } = hexToRGBPooled(colour);
+    let gradientAlpha = 1;
     if (gradient.opacities) {
       const value = gradient.opacities[index];
       if (value !== undefined) {
-        a = value;
+        gradientAlpha = value;
       }
     }
 
@@ -159,7 +182,7 @@ function getRampData(gradient: Gradient) {
     array[n] = r * 255;
     array[n + 1] = g * 255;
     array[n + 2] = b * 255;
-    array[n + 3] = a * 255;
+    array[n + 3] = gradientAlpha * a * 255;
   }
 
   return new Uint8Array(array);

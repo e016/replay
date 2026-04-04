@@ -254,8 +254,8 @@ const generateGradient = (
       const a = gradient.opacities[index];
       if (a !== undefined) {
         // Add alpha to colour value
-        const { r, g, b } = hexToRGBPooled(colour);
-        colour = `rgba(${r * 255}, ${g * 255}, ${b * 255}, ${a}`;
+        const { r, g, b, a: alpha } = hexToRGBPooled(colour);
+        colour = `rgba(${r * 255}, ${g * 255}, ${b * 255}, ${a * alpha})`;
       }
     }
 

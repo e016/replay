@@ -105,8 +105,8 @@ export function getDrawCircle(
     gl.uniformMatrix3fv(uMatrixLocation, false, uMatrixPooled);
 
     // Set uniforms
-    const { r, g, b } = hexToRGBPooled(colour, opacity);
-    gl.uniform4f(uColourLocation, r, g, b, opacity);
+    const { r, g, b, a } = hexToRGBPooled(colour, opacity);
+    gl.uniform4f(uColourLocation, r, g, b, opacity * a);
     gl.uniform1f(uNumVertexLocation, numVertex);
     gl.uniform1f(uRadiusLocation, radius);
     gl.uniform1f(uAngleMultiplierLocation, semiCircle ? 0.5 : 1);
